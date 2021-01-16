@@ -6,6 +6,7 @@ const config = require('config');
 const { check, validation, validationResult } = require('express-validator');
 const User = require('../../models/User');
 const router = express.Router();
+
 //@route  Post api/users
 //@desc   Register user
 //@access Public
@@ -72,8 +73,8 @@ router.post(
 				}
 			);
 		} catch (error) {
-			console.error(error.message);
-			Response.status(500).send('Server error');
+			console.error(`Post Create users ${error.message}`);
+			res.status(500).send('Server error');
 		}
 	}
 );
