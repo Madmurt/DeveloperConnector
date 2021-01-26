@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import Moment from 'react-moment';
+import formatDate from '../../utils/formatDate';
 import { connect } from 'react-redux';
 
 const Experience = ({ experience }) => {
@@ -9,15 +9,7 @@ const Experience = ({ experience }) => {
 			<td>{exp.company}</td>
 			<td className='hide-sm'>{exp.title}</td>
 			<td>
-				<Moment>
-					console.log(exp.from)
-					<Moment format='YYYY/MM/DD'>{exp.from}</Moment> -{' '}
-					{exp.to === null ? (
-						' Now'
-					) : (
-						<Moment format='YYYY/MM/DD'>{exp.to}</Moment>
-					)}
-				</Moment>
+				{formatDate(exp.from)} - {exp.to ? formatDate(exp.to) : 'Now'}
 			</td>
 			<td>
 				<button className='btn btn-danger'>Delete</button>
