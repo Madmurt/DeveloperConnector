@@ -201,8 +201,8 @@ router.post(
 			return res.status(400).json({ errors: errors.array() });
 		}
 		try {
-			const post = await Post.findById(req.params.post_id);
 			const user = await User.findById(req.user.id).select('-password');
+			const post = await Post.findById(req.params.post_id);
 
 			const newComment = {
 				text: req.body.text,
@@ -213,7 +213,7 @@ router.post(
 
 			post.comments.unshift(newComment);
 			await post.save();
-			res.json(post);
+			res.json(post.comments);
 		} catch (error) {
 			console.error(error.message);
 			res.status(500).send('Server error');
@@ -225,12 +225,12 @@ router.post(
 //@desc   Delete comments by id
 //@access Private
 
-router.delete('/comment/:comment_id/:post_id', auth, async (req, res) => {
+router.delete('/comment/:post_id/:comment_id', auth, async (req, res) => {
 	try {
 		const post = await Post.findById(req.params.post_id);
 
 		const comment = post.comments.find(
-			(comment) => comment.id == req.params.comment_id
+			(comment) => comment.id === req.params.comment_id
 		);
 
 		if (!comment) {
@@ -241,11 +241,9 @@ router.delete('/comment/:comment_id/:post_id', auth, async (req, res) => {
 			return res.status(401).json({ msg: 'User not authorized' });
 		}
 
-		const removeIndex = post.comments
-			.map((comment) => comment.id)
-			.indexOf(req.params.comment_id);
-
-		post.comments.splice(removeIndex, 1);
+		post.comments = post.comments.filter(
+			({ id }) => id !== req.params.comment_id
+		);
 		await post.save();
 
 		res.json(post.comments);

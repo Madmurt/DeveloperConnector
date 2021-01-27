@@ -156,11 +156,11 @@ router.get('/user/:user_id', async (req, res) => {
 
 router.delete('/', auth, async (req, res) => {
 	try {
-		await Post.deleteMany({ user: req.user.id });
-
-		await Profile.findOneAndDelete({ user: req.user.id });
-
-		await User.findOneAndDelete({ _id: req.user.id });
+		await Promise.all([
+			Post.deleteMany({ user: req.user.id }),
+			Profile.findOneAndRemove({ user: req.user.id }),
+			User.findOneAndRemove({ _id: req.user.id }),
+		]);
 
 		res.json({ msg: 'Profile and user deleted' });
 	} catch (error) {
